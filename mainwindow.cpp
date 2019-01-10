@@ -2,9 +2,32 @@
 #include "ui_mainwindow.h"
 
 #include <QtWidgets>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QtCore>
+#include <iostream>
 
 //网页地址
-const QString URLSTR = "http://blog.csdn.net/juzhijian/article/details/51866045";
+//const QString URLSTR = "http://blog.csdn.net/juzhijian/article/details/51866045";
+
+//读取json链接
+class TT : public QObject
+{
+    Q_OBJECT
+public:
+    static QString getHtml(QString url)
+    {
+        QNetworkAccessManager *manager = new QNetworkAccessManager();
+        QNetworkReply *reply = manager->get(QNetworkRequest(QUrl(url)));
+        QByteArray responseData;
+        QEventLoop eventLoop;
+        connect(manager, SIGNAL(finished(QNetworkReply*)), &eventLoop, SLOT(quit()));
+        eventLoop.exec();       //block until finish
+        responseData = reply->readAll();
+        return QString(responseData);
+    }
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,9 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->buttonGroup->setId(ui->radioButton,0);//设置ID
     ui->buttonGroup->setId(ui->radioButton_2,1);
     ui->buttonGroup->setId(ui->radioButton_3,2);
-    //设置注册对话框标题
-    vv = "2.6";
-    this->setWindowTitle(QStringLiteral("方舟等级生成 V")+vv+QStringLiteral(" 64bit"));
     //检查更新
     install();
 }
@@ -28,39 +48,35 @@ MainWindow::~MainWindow()
 //更新
 void MainWindow::install()
 {
-    QUrl url(URLSTR);
-    QNetworkAccessManager manager;
-    QEventLoop loop;
-    //qDebug() << "Reading code form " << URLSTR;
-    //发出请求
-    QNetworkReply *reply = manager.get(QNetworkRequest(url));
-    //请求结束并下载完成后，退出子事件循环
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    //开启子事件循环
-    loop.exec();
-
-    //将读到的信息写入文件
-    QString code = reply->readAll();
-    QString z;
-    for(int i = 1;i<10000;i++)
-    {
-        if (code.mid(i,7)=="<title>")
-        {
-            z = code.mid(i+17,3);
-        }
-    }
-    if(z!=vv)
+    //链接转字符串
+    QString jsonString = TT::getHtml(QString("http://zhijianlb.vicp.net/ARK_Grade/ARK_Grade.json") );
+    //字符串转json文档
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(jsonString.toLocal8Bit().data());
+    //json文档转数据
+    QJsonObject jsonObject = jsonDocument.object();
+    //读取数值
+    QString homepage = jsonObject["homepage"].toString();
+    QString newversion = jsonObject["version"].toString();
+    QString downloadurl = jsonObject["downloadurl"].toString();
+    //设置链接
+    QUrl homepageurl(homepage);
+    QUrl downloadurlurl(downloadurl);
+    //设置注册对话框标题
+    QString oldversion = "2.6";
+    this->setWindowTitle(QStringLiteral("方舟等级生成 V")+oldversion);
+    //判断是否需要更新
+    if(newversion!=oldversion)
     {
         QMessageBox message(QMessageBox::Warning,QStringLiteral("提示"),
                             QStringLiteral("检查到新版本,程序需要更新！"),
                             QMessageBox::Yes|QMessageBox::No);
         if (message.exec()==QMessageBox::Yes)
            {
-            QDesktopServices::openUrl(QUrl("https://blog.juzhijian.com/"));
+            QDesktopServices::openUrl(QUrl(downloadurlurl));
            }
     }
     else {
-        QDesktopServices::openUrl(QUrl("https://blog.juzhijian.com/"));
+        QDesktopServices::openUrl(QUrl(homepageurl));
     }
 }
 
@@ -208,10 +224,17 @@ void MainWindow::on_pushButton_clicked()
             "BabyCuddleGracePeriodMultiplier=" + QString::number(ui->lineEdit_97->text().toFloat(),'f', 6) + "\n" +
             "BabyImprintingStatScaleMultiplier=" + QString::number(ui->lineEdit_43->text().toFloat(),'f', 6) + "\n" +
             "BabyCuddleLoseImprintQualitySpeedMultiplier=" + QString::number(ui->lineEdit_44->text().toFloat(),'f', 6) + "\n";
+    //其他设置
+    QString Other=
+            "GlobalCorpseDecompositionTimeMultiplier=" + QString::number(ui->lineEdit_73->text().toFloat(),'f', 6) + "\n" +
+            "GlobalSpoilingTimeMultiplier=" + QString::number(ui->lineEdit_74->text().toFloat(),'f', 6) + "\n" +
+            "CropGrowthSpeedMultiplier=" + QString::number(ui->lineEdit_72->text().toFloat(),'f', 6) + "\n" +
+            "PoopIntervalMultiplier=" + QString::number(ui->lineEdit_71->text().toFloat(),'f', 6) + "\n";
+
     //ui->textBrowser->setText(QString::number(aaaa));
     //生成文本
     ui->textBrowser->setText(sh + player + DinoTamed + DinoWild + player_levle + dinosaur_level
-                             + function_Research(num[0],num[1]) + DinosaurDreeding);
+                             + function_Research(num[0],num[1]) + DinosaurDreeding + Other);
 
     //导出INI文件
     QString path = QFileDialog::getSaveFileName(this, tr("Open ini"), "Game", tr("ini Files (*.ini)"));

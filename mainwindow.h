@@ -16,7 +16,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void install();
-    QString vv;
 
 private slots:
     void on_pushButton_clicked();
