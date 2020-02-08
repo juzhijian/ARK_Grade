@@ -50,7 +50,7 @@
    <string>方舟等级生成 V2.3 64bit</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../ARK_Plugins_Platform/imagers.qrc">
     <normaloff>:/images/123.ico</normaloff>:/images/123.ico</iconset>
   </property>
   <property name="windowOpacity">
@@ -139,7 +139,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>

@@ -1,4 +1,4 @@
-IDI_ICON1 ICON DISCARDABLE "images/123.ico"
+ï»¿IDI_ICON1 ICON DISCARDABLE "images/123.ico";
 
 #if defined(UNDER_CE)
 #include <winbase.h>
@@ -23,14 +23,14 @@ VS_VERSION_INFO VERSIONINFO
         BEGIN
             BLOCK "080404b0"
             BEGIN
-                VALUE "CompanyName", "ÏÄĞ¡Óê\0"
-                VALUE "FileDescription", "·½ÖÛµÈ¼¶Éú³É¹¤¾ß\0"
+                VALUE "CompanyName", "å¤å°é›¨\0"
+                VALUE "FileDescription", "æ–¹èˆŸç­‰çº§ç”Ÿæˆå·¥å…·\0"
                 VALUE "FileVersion", "2.2.0.00\0"
                 VALUE "ProductVersion", "2.2.0.00\0"
-                VALUE "LegalCopyright", "°æÈ¨ËùÓĞ (C) ÏÄĞ¡Óê\0"
-                VALUE "LegalTrademarks", "ÏÄĞ¡Óê\0"
+                VALUE "LegalCopyright", "ç‰ˆæƒæ‰€æœ‰ (C) å¤å°é›¨\0"
+                VALUE "LegalTrademarks", "å¤å°é›¨\0"
                 VALUE "OriginalFilename", "ARK-Grade.exe\0"
-                VALUE "ProductName", "·½ÖÛµÈ¼¶Éú³É¹¤¾ß\0"
+                VALUE "ProductName", "æ–¹èˆŸç­‰çº§ç”Ÿæˆå·¥å…·\0"
                 VALUE "InternalName", "ARK-Grade.exe\0"
            END
         END
